@@ -86,8 +86,9 @@ void matrixMultiplication(float* M, float* N, float* P, int width) {
     checkError(err);
 
     size_t globalSize[] = {width, width};
+    size_t localSize[] = {32, 32};
 
-    err = clEnqueueNDRangeKernel( commandQueue, kernel, 2, NULL, globalSize, NULL, 0, NULL, NULL);
+    err = clEnqueueNDRangeKernel( commandQueue, kernel, 2, NULL, globalSize, localSize, 0, NULL, NULL);
     checkError(err);
 
     err = clEnqueueReadBuffer( commandQueue, Pd,  CL_TRUE, 0, size, P, 0, NULL, NULL );

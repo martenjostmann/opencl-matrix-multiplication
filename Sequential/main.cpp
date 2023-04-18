@@ -36,6 +36,8 @@ int main()
     // End time
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
+    checkSolution(P, WIDTH);
+
     // Free resources
     delete[] M;
     delete[] N;

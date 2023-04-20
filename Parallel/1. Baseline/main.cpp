@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include "../../Utils/matrix_init.h"
+#include "../../Utils/general.h"
 #include <CL/cl.h>
 
 #define WIDTH 1024
@@ -35,25 +36,13 @@ void initOpenCL() {
 void createKernel() {
     cl_int err;
 
-    const char* kernelSource = "__kernel \
-        void matrixMultiplicationKernel(__global float* Md, \
-                                        __global float* Nd, \
-                                        __global float* Pd, \
-                                        int width) { \
-            int col = get_global_id(0); \
-            int row = get_global_id(1); \
-            \
-            float sum = 0; \
-            for (int k = 0; k < width; k+=1) \
-                sum += Md[row * width + k] * Nd[k * width + col]; \
-            \
-            Pd[row * width + col] = sum; \
-        }";
+    long kernel_size;
 
-    size_t sourceLength = strlen(kernelSource);
+    char *kernelSource = readKernel("kernel.cl", &kernel_size);
+    const char* constCode = kernelSource;
 
     cl_program program;
-    program = clCreateProgramWithSource(context, 1, &kernelSource, &sourceLength, &err);
+    program = clCreateProgramWithSource(context, 1, &constCode, NULL, &err);
     checkError(err);
 
     err = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);

@@ -3,7 +3,7 @@
 
 void checkSolution(float *, int);
 
-void fill(float*, int);
+void fill(float *, int);
 
 float *matrixInit(float *, int, bool);
 

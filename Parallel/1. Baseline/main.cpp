@@ -6,18 +6,20 @@
 
 #define WIDTH 1024
 
-cl_platform_id    platform;
-cl_device_id      device;
-cl_context        context;
-cl_command_queue  commandQueue;
-cl_kernel         kernel;
+cl_platform_id platform;
+cl_device_id device;
+cl_context context;
+cl_command_queue commandQueue;
+cl_kernel kernel;
 
-void checkError(cl_int err) {
-  if (err != CL_SUCCESS)
-    printf("Error with errorcode: %d\n", err);
+void checkError(cl_int err)
+{
+    if (err != CL_SUCCESS)
+        printf("Error with errorcode: %d\n", err);
 }
 
-void initOpenCL() {
+void initOpenCL()
+{
     cl_int err;
 
     err = clGetPlatformIDs(1, &platform, NULL);
@@ -33,13 +35,14 @@ void initOpenCL() {
     checkError(err);
 }
 
-void createKernel() {
+void createKernel()
+{
     cl_int err;
 
     long kernel_size;
 
     char *kernelSource = readKernel("kernel.cl", &kernel_size);
-    const char* constCode = kernelSource;
+    const char *constCode = kernelSource;
 
     cl_program program;
     program = clCreateProgramWithSource(context, 1, &constCode, NULL, &err);
@@ -51,7 +54,8 @@ void createKernel() {
     checkError(err);
 }
 
-void matrixMultiplication(float* M, float* N, float* P, int width) {
+void matrixMultiplication(float *M, float *N, float *P, int width)
+{
     cl_int err;
     int size = width * width * sizeof(float);
 
@@ -68,19 +72,19 @@ void matrixMultiplication(float* M, float* N, float* P, int width) {
     cl_mem Pd = clCreateBuffer(context, CL_MEM_READ_WRITE, size, NULL, &err);
     checkError(err);
 
-    err  = clSetKernelArg( kernel, 0, sizeof(cl_mem), &Md );
-    err |= clSetKernelArg( kernel, 1, sizeof(cl_mem), &Nd );
-    err |= clSetKernelArg( kernel, 2, sizeof(cl_mem), &Pd );
-    err |= clSetKernelArg( kernel, 3, sizeof(int), &width );
+    err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &Md);
+    err |= clSetKernelArg(kernel, 1, sizeof(cl_mem), &Nd);
+    err |= clSetKernelArg(kernel, 2, sizeof(cl_mem), &Pd);
+    err |= clSetKernelArg(kernel, 3, sizeof(int), &width);
     checkError(err);
 
     size_t globalSize[] = {width, width};
     size_t localSize[] = {32, 32};
 
-    err = clEnqueueNDRangeKernel( commandQueue, kernel, 2, NULL, globalSize, localSize, 0, NULL, NULL);
+    err = clEnqueueNDRangeKernel(commandQueue, kernel, 2, NULL, globalSize, localSize, 0, NULL, NULL);
     checkError(err);
 
-    err = clEnqueueReadBuffer( commandQueue, Pd,  CL_TRUE, 0, size, P, 0, NULL, NULL );
+    err = clEnqueueReadBuffer(commandQueue, Pd, CL_TRUE, 0, size, P, 0, NULL, NULL);
     checkError(err);
 }
 
@@ -101,7 +105,7 @@ int main()
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     matrixMultiplication(M, N, P, WIDTH);
-    
+
     // End time
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
@@ -112,7 +116,7 @@ int main()
     delete[] N;
     delete[] P;
 
-    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
+    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
 }
 
 // g++ main.cpp ../../Utils/matrix_init.cpp -L"C:\Users\marte\vcpkg\packages\opencl_x64-windows\lib" -lOpenCL -I"C:\Users\marte\vcpkg\packages\opencl_x64-windows\include" -o main

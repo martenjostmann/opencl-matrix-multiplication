@@ -36,8 +36,7 @@ __kernel void matrixMultiplicationKernel(__global float2 *Md,
           valA = vecA.y;
           break;
         }
-        thread_work.x += valA * vecB.x;
-        thread_work.y += valA * vecB.y;
+        thread_work += valA * vecB;
       }
     }
     barrier(CLK_LOCAL_MEM_FENCE);

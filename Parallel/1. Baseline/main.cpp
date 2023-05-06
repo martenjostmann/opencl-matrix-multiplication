@@ -4,8 +4,6 @@
 #include "../../Utils/general.h"
 #include <CL/cl.h>
 
-#define WIDTH 1024
-
 cl_platform_id platform;
 cl_device_id device;
 cl_context context;
@@ -18,19 +16,35 @@ void checkError(cl_int err)
         printf("Error with errorcode: %d\n", err);
 }
 
-void initOpenCL()
+void initOpenCL(int platform_id)
 {
     cl_int err;
+    cl_uint numPlatforms;
 
-    err = clGetPlatformIDs(1, &platform, NULL);
+    // Get number of platforms
+    err = clGetPlatformIDs(0, NULL, &numPlatforms);
+
+    // Allocate memory for platforms
+    cl_platform_id *platformList = (cl_platform_id *)malloc(numPlatforms * sizeof(cl_platform_id));
+
+    // Get all platforms
+    err = clGetPlatformIDs(numPlatforms, platformList, NULL);
     checkError(err);
 
+    // Select specific platform
+    cl_platform_id platform = platformList[platform_id];
+
+    free(platformList);
+
+    // Get device
     err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 2, &device, NULL);
     checkError(err);
 
+    // Create context for device
     context = clCreateContext(NULL, 1, &device, NULL, NULL, &err);
     checkError(err);
 
+    // create command queue for context and device
     commandQueue = clCreateCommandQueue(context, device, 0, &err);
     checkError(err);
 }
@@ -88,17 +102,26 @@ void matrixMultiplication(float *M, float *N, float *P, int width)
     checkError(err);
 }
 
-int main()
+int main(int argc, char **argv)
 {
     float *M;
     float *N;
     float *P;
+    int WIDTH;
+    int PLATFORM_ID;
+
+    // Parse arguments
+    std::map<std::string, std::string> params = parseArgs(argc, argv);
+
+    // Get arguments
+    WIDTH = getWidth(params);
+    PLATFORM_ID = getPlatformId(params);
 
     M = matrixInit(M, WIDTH, true);
     N = matrixInit(N, WIDTH, true);
     P = matrixInit(N, WIDTH, false);
 
-    initOpenCL();
+    initOpenCL(PLATFORM_ID);
     createKernel();
 
     // Start time

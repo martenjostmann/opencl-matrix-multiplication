@@ -1,5 +1,7 @@
 #include "general.h"
 #include <iostream>
+#include <string>
+#include <map>
 
 char *readKernel(const char *filename, long *size)
 {
@@ -26,4 +28,52 @@ char *readKernel(const char *filename, long *size)
 
     *size = (program_size + 1);
     return source_str;
+}
+
+std::map<std::string, std::string> parseArgs(int argc, char **argv)
+{
+    std::map<std::string, std::string> args;
+    std::string current_param = "";
+
+    for (int i = 1; i < argc; i++)
+    {
+        std::string arg = argv[i];
+        if (arg[0] == '-')
+        {
+            current_param = arg.substr(1);
+            args[current_param] = "";
+        }
+        else if (current_param != "")
+        {
+            args[current_param] = arg;
+            current_param = "";
+        }
+    }
+    return args;
+}
+
+int getWidth(std::map<std::string, std::string> params)
+{
+    if (params.find("w") == params.end())
+    {
+        std::cout << "The width is not specified. Please specify it with -w (Using standard 1024)" << std::endl;
+        return 1024;
+    }
+    else
+    {
+        return std::stoi(params["w"]);
+    }
+}
+
+int getPlatformId(std::map<std::string, std::string> params)
+{
+    if (params.find("p") == params.end())
+    {
+        std::cout << "The OpenCL platform id is not specified. Please specify it with -p (Using standard 0)" << std::endl;
+        return 0;
+    }
+    else
+    {
+        return std::stoi(params["p"]);
+    }
 }

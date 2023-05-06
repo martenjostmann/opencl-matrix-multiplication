@@ -1,5 +1,6 @@
 #include <iostream>
 #include <chrono>
+#include <cstring>
 #include "../../Utils/matrix_init.h"
 #include "../../Utils/general.h"
 #include <CL/cl.h>

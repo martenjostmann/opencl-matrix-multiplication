@@ -1,3 +1,11 @@
+//***************************************************************************
+//  File:   main.cpp
+//  Author: Marten Jostmann
+//
+//  This file implements a matrix multiplication using shared memory.
+//
+//***************************************************************************
+
 #include <iostream>
 #include <chrono>
 #include <cstring>

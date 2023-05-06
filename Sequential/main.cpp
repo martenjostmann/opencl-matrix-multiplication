@@ -1,3 +1,11 @@
+//***************************************************************************
+//  File:   main.cpp
+//  Author: Marten Jostmann
+//
+//  This file implements the sequential matrix multiplication.
+//
+//***************************************************************************
+
 #include <iostream>
 #include <chrono>
 #include "../Utils/matrix_init.h"

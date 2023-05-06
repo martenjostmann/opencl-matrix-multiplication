@@ -1,3 +1,11 @@
+//***************************************************************************
+//  File:   general.cpp
+//  Author: Marten Jostmann
+//
+//  This file includes general functions used in the different implementations.
+//
+//***************************************************************************
+
 #include "general.h"
 #include <iostream>
 #include <string>

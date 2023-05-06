@@ -1,3 +1,12 @@
+//***************************************************************************
+//  File:   main.cpp
+//  Author: Marten Jostmann
+//
+//  This file implements a matrix multiplication using shared memory and
+//  enhanced work per work item including vectors.
+//
+//***************************************************************************
+
 #include <iostream>
 #include <chrono>
 #include "../../Utils/matrix_init.h"

@@ -1,3 +1,11 @@
+//***************************************************************************
+//  File:   matrix_init.cpp
+//  Author: Marten Jostmann
+//
+//  This file implements functions to initialize matrices and check the solution.
+//
+//***************************************************************************
+
 #include <iostream>
 #include "../Utils/matrix_init.h"
 

@@ -37,7 +37,7 @@ int main()
 
     M = matrixInit(M, WIDTH, true);
     N = matrixInit(N, WIDTH, true);
-    P = matrixInit(N, WIDTH, false);
+    P = matrixInit(P, WIDTH, false);
 
     // Start time
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();

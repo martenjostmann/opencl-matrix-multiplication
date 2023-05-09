@@ -181,7 +181,7 @@ int main(int argc, char **argv)
 
     M = matrixInit(M, WIDTH, true);
     N = matrixInit(N, WIDTH, true);
-    P = matrixInit(N, WIDTH, false);
+    P = matrixInit(P, WIDTH, false);
 
     initOpenCL(PLATFORM_ID);
     createKernel();

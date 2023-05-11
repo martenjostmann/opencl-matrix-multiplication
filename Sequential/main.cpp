@@ -9,6 +9,7 @@
 #include <iostream>
 #include <chrono>
 #include "../Utils/matrix_init.h"
+#include "../Utils/general.h"
 
 #define WIDTH 1024
 
@@ -41,13 +42,20 @@ void printMatrix(float *M, int X, int Y)
     }
 }
 
-int main()
+int main(int argc, char **argv)
 {
     float *M;
     float *N;
     float *P;
+    std::tuple<int, int, int> XYZ;
 
-    int X = 3, Y = 3, Z = 3;
+    // Parse arguments
+    std::map<std::string, std::string> params = parseArgs(argc, argv);
+
+    // Get arguments
+    XYZ = getXYZ(params);
+
+    int X = std::get<0>(XYZ), Y = std::get<1>(XYZ), Z = std::get<2>(XYZ);
 
     M = matrixInit(M, X * Y, true);
     N = matrixInit(N, Y * Z, true);

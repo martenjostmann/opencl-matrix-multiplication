@@ -120,7 +120,7 @@ int main(int argc, char **argv)
     float *M;
     float *N;
     float *P;
-    int WIDTH;
+    std::tuple<int, int, int> XYZ;
     int PLATFORM_ID;
     const char *KERNEL_PATH;
 
@@ -128,11 +128,11 @@ int main(int argc, char **argv)
     std::map<std::string, std::string> params = parseArgs(argc, argv);
 
     // Get arguments
-    WIDTH = getWidth(params);
+    XYZ = getXYZ(params);
     PLATFORM_ID = getPlatformId(params);
     KERNEL_PATH = getKernelPath(params);
 
-    int X = 1024, Y = 128, Z = 128;
+    int X = std::get<0>(XYZ), Y = std::get<1>(XYZ), Z = std::get<2>(XYZ);
 
     M = matrixInit(M, X * Y, true);
     N = matrixInit(N, Y * Z, true);

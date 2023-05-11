@@ -13,11 +13,10 @@
 #include "../../Utils/matrix_init.h"
 #include "../../Utils/general.h"
 #include <CL/cl.h>
+#include "header.h"
 
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
-#define TILE_SIZE 32
-#define THREAD_WORK_SIZE 2
 
 cl_platform_id platform;
 cl_device_id device;
@@ -87,56 +86,13 @@ void createKernel()
 {
     cl_int err;
 
-    const char *kernelSource =
-        "#define TILE_SIZE " STR(TILE_SIZE) "\n"
-                                            "#define THREAD_WORK_SIZE " STR(THREAD_WORK_SIZE) "\n"
-                                                                                              "__kernel \
-        void matrixMultiplicationKernel(__global float* Md, \
-                                        __global float* Nd, \
-                                        __global float* Pd, \
-                                        int X, \
-                                        int Y, \
-                                        int Z) { \
-            \
-            __local float Ml[TILE_SIZE][TILE_SIZE]; \
-            __local float Nl[TILE_SIZE][TILE_SIZE]; \
-            \
-            int col = get_global_id(0); \
-            int row = get_global_id(1); \
-            int l_col = get_local_id(0); \
-            int l_row = get_local_id(1); \
-            \
-            int RTS = TILE_SIZE/THREAD_WORK_SIZE; \
-            float thread_work[THREAD_WORK_SIZE];\
-            for (int i = 0; i < THREAD_WORK_SIZE; i++) {\
-                thread_work[i] = 0.0f;\
-            }\
-            \
-            float sum = 0; \
-            for (int k = 0; k < (Y/TILE_SIZE); k++) { \
-                for (int l = 0; l < THREAD_WORK_SIZE; l++) { \
-                    Ml[l_row][l_col*THREAD_WORK_SIZE + l] = Md[row * Y + (k * TILE_SIZE + l_col*THREAD_WORK_SIZE+l)]; \
-                    Nl[l_row][l_col*THREAD_WORK_SIZE + l] = Nd[(k * TILE_SIZE + l_row) * Z + col * THREAD_WORK_SIZE + l]; \
-                } \
-                barrier(CLK_LOCAL_MEM_FENCE); \
-                \
-                for (int i = 0; i < TILE_SIZE; i++) { \
-                    for (int j = 0; j < THREAD_WORK_SIZE; j++) { \
-                        thread_work[j] += Ml[l_row][i] * Nl[i][l_col*THREAD_WORK_SIZE+j];\
-                    } \
-                } \
-                barrier(CLK_LOCAL_MEM_FENCE); \
-            } \
-            \
-            for (int i = 0; i < THREAD_WORK_SIZE; i++) { \
-                Pd[row * Z + col*THREAD_WORK_SIZE + i] = thread_work[i]; \
-            }\
-        }";
+    long kernel_size;
 
-    size_t sourceLength = strlen(kernelSource);
+    char *kernelSource = readKernel("kernel.cl", &kernel_size);
+    const char *constCode = kernelSource;
 
     cl_program program;
-    program = clCreateProgramWithSource(context, 1, &kernelSource, &sourceLength, &err);
+    program = clCreateProgramWithSource(context, 1, &constCode, NULL, &err);
     checkError(err);
 
     err = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);

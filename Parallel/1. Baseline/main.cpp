@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <cstring>
 #include "../../Utils/matrix_init.h"
 #include "../../Utils/general.h"
 #include <CL/cl.h>
@@ -57,13 +58,13 @@ void initOpenCL(int platform_id)
     checkError(err);
 }
 
-void createKernel()
+void createKernel(const char *kernel_path)
 {
     cl_int err;
 
     long kernel_size;
 
-    char *kernelSource = readKernel("kernel.cl", &kernel_size);
+    char *kernelSource = readKernel(kernel_path, &kernel_size);
     const char *constCode = kernelSource;
 
     cl_program program;
@@ -121,6 +122,7 @@ int main(int argc, char **argv)
     float *P;
     int WIDTH;
     int PLATFORM_ID;
+    const char *KERNEL_PATH;
 
     // Parse arguments
     std::map<std::string, std::string> params = parseArgs(argc, argv);
@@ -128,6 +130,7 @@ int main(int argc, char **argv)
     // Get arguments
     WIDTH = getWidth(params);
     PLATFORM_ID = getPlatformId(params);
+    KERNEL_PATH = getKernelPath(params);
 
     int X = 1024, Y = 128, Z = 128;
 
@@ -136,7 +139,7 @@ int main(int argc, char **argv)
     P = matrixInit(P, X * Z, false);
 
     initOpenCL(PLATFORM_ID);
-    createKernel();
+    createKernel(KERNEL_PATH);
 
     // Start time
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();

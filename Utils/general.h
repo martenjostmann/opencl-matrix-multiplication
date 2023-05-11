@@ -11,4 +11,6 @@ int getWidth(std::map<std::string, std::string>);
 
 int getPlatformId(std::map<std::string, std::string>);
 
+const char *getKernelPath(std::map<std::string, std::string>);
+
 #endif

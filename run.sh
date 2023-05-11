@@ -22,16 +22,18 @@ module --force purge
 ml palma/2022a
 ml CUDA/11.7.0
 
-cd /scratch/tmp/m_jost02/parallel_programming
+#cd /scratch/tmp/m_jost02/parallel_programming
 
-path=/scratch/tmp/m_jost02/test/${dirname}
-mkdir -p "$path"
+code_path="/scratch/tmp/m_jost02/parallel_programming"
+job="/Parallel/1. Baseline/main"
+output_path=/scratch/tmp/m_jost02/output/${dirname}
+mkdir -p "$output_path"
 
 buildname=build-${partition}
 
-g++ -std=c++11 "../Parallel/1. Baseline/main.cpp" ../Utils/matrix_init.cpp ../Utils/general.cpp -lOpenCL -o main
+g++ -std=c++11 "Parallel/1. Baseline/main.cpp" Utils/matrix_init.cpp Utils/general.cpp -lOpenCL -o "/scratch/tmp/m_jost02/parallel_programming/Parallel/1. Baseline/main"
 
 for width in 1024, 2048; do
     paramname="${width}x${width}-g${gpu}"
-    ./native/${buildname}/main -w $width >> "${path}/native.out"
+    "$code_path$job" -w $width -p 1 -k "/scratch/tmp/m_jost02/parallel_programming/Parallel/1. Baseline/kernel.cl" >> "${output_path}/native.out"
 done

@@ -85,3 +85,16 @@ int getPlatformId(std::map<std::string, std::string> params)
         return std::stoi(params["p"]);
     }
 }
+
+const char *getKernelPath(std::map<std::string, std::string> params)
+{
+    if (params.find("k") == params.end())
+    {
+        std::cout << "The kernel path is not specified. Please specify it with -k (Using standard \"kernel.cl\")" << std::endl;
+        return "kernel.cl";
+    }
+    else
+    {
+        return params["k"].c_str();
+    }
+}

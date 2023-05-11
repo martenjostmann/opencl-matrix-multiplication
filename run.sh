@@ -25,7 +25,7 @@ ml CUDA/11.7.0
 #cd /scratch/tmp/m_jost02/parallel_programming
 
 code_path="/scratch/tmp/m_jost02/parallel_programming"
-job="/Parallel/1. Baseline/main"
+job="/Parallel/1. Baseline"
 output_path=/scratch/tmp/m_jost02/output/${dirname}
 mkdir -p "$output_path"
 
@@ -35,5 +35,5 @@ g++ -std=c++11 "Parallel/1. Baseline/main.cpp" Utils/matrix_init.cpp Utils/gener
 
 for width in 1024, 2048; do
     paramname="${width}x${width}-g${gpu}"
-    "$code_path$job" -w $width -p 1 -k "/scratch/tmp/m_jost02/parallel_programming/Parallel/1. Baseline/kernel.cl" >> "${output_path}/native.out"
+    "$[code_path}${job}/main" -w $width -p 1 -k "${code_path}${job}/kernel.cl" >> "${output_path}/native.out"
 done

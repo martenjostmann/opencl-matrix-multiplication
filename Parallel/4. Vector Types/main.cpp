@@ -67,7 +67,7 @@ void printBuildLog(cl_program program, cl_device_id device)
     cl_int err;
     char *build_log;
     size_t build_log_size;
-    // Speichere den Build Log fuer program und device in build_log
+
     err = clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, 0, NULL, &build_log_size);
     checkError(err);
 
@@ -81,13 +81,13 @@ void printBuildLog(cl_program program, cl_device_id device)
     free(build_log);
 }
 
-void createKernel()
+void createKernel(const char *kernel_path)
 {
     cl_int err;
 
     long kernel_size;
 
-    char *kernelSource = readKernel("kernel.cl", &kernel_size);
+    char *kernelSource = readKernel(kernel_path, &kernel_size);
     const char *constCode = kernelSource;
 
     cl_program program;
@@ -164,7 +164,7 @@ int main(int argc, char **argv)
     P = matrixInit(P, X * Z, false);
 
     initOpenCL(PLATFORM_ID);
-    createKernel();
+    createKernel(KERNEL_PATH);
 
     // Start time
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();

@@ -31,7 +31,7 @@ mkdir -p "$output_path"
 
 buildname=build-${partition}
 
-g++ -std=c++11 "Parallel/1. Baseline/main.cpp" Utils/matrix_init.cpp Utils/general.cpp -lOpenCL -o "/scratch/tmp/m_jost02/parallel_programming/Parallel/1. Baseline/main"
+g++ -std=c++11 "Parallel/1. Baseline/main.cpp" Utils/matrix_init.cpp Utils/general.cpp -lOpenCL -o "${code_path}${job}/main"
 
 for width in 1024, 2048; do
     paramname="${width}x${width}-g${gpu}"

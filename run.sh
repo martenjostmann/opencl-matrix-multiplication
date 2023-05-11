@@ -35,5 +35,5 @@ g++ -std=c++11 "Parallel/1. Baseline/main.cpp" Utils/matrix_init.cpp Utils/gener
 
 for width in 1024, 2048; do
     paramname="${width}x${width}-g${gpu}"
-    "${code_path}${job}/main" -w $width -p 1 -k "${code_path}${job}/kernel.cl" >> "${output_path}/native.out"
+    "${code_path}${job}/main" -x $width -y $width -z $width -p 1 -k "${code_path}${job}/kernel.cl" >> "${output_path}/native.out"
 done

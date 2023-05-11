@@ -18,7 +18,7 @@ partition=gpu2080
 implementation="native"
 dirname=$(date +"%Y-%m-%dT%H-%M-%S-${partition}-${implementation}")
 
-module purge
+module --force purge
 ml palma/2022a
 ml CUDA/11.7.0
 
@@ -29,13 +29,7 @@ mkdir -p "$path"
 
 buildname=build-${partition}
 
-(
-cd native
-rm -rf "$buildname"
-mkdir "$buildname"
-cd "$buildname"
-g++ -std=c++11 "../Parallel/1. Baseline/main.cpp" ../Utils/matrix_init.cpp -lOpenCL -o main
-)
+g++ -std=c++11 "../Parallel/1. Baseline/main.cpp" ../Utils/matrix_init.cpp ../Utils/general.cpp -lOpenCL -o main
 
 for width in 1024, 2048; do
     paramname="${width}x${width}-g${gpu}"

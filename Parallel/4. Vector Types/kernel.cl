@@ -1,7 +1,10 @@
 #include <header.h>
 __kernel void matrixMultiplicationKernel(__global float2 *Md,
                                          __global float2 *Nd,
-                                         __global float2 *Pd, int width) {
+                                         __global float2 *Pd,
+                                          int X,
+                                          int Y,
+                                          int Z) {
 
   __local float2 Ml[TILE_SIZE][TILE_SIZE / VECTOR_SIZE];
   __local float2 Nl[TILE_SIZE][TILE_SIZE / VECTOR_SIZE];
@@ -14,12 +17,12 @@ __kernel void matrixMultiplicationKernel(__global float2 *Md,
   float2 thread_work = {0.0f, 0.0f};
 
   float sum = 0;
-  for (int k = 0; k < (width / TILE_SIZE); k++) {
+  for (int k = 0; k < (Y / TILE_SIZE); k++) {
 
-    Ml[l_row][l_col] = Md[row * (width / VECTOR_SIZE) +
+    Ml[l_row][l_col] = Md[row * (Y / VECTOR_SIZE) +
                           (k * (TILE_SIZE / VECTOR_SIZE) + l_col)];
     Nl[l_row][l_col] =
-        Nd[(k * TILE_SIZE + l_row) * (width / VECTOR_SIZE) + col];
+        Nd[(k * TILE_SIZE + l_row) * (Z / VECTOR_SIZE) + col];
     barrier(CLK_LOCAL_MEM_FENCE);
 
     float2 vecA, vecB;
@@ -42,5 +45,5 @@ __kernel void matrixMultiplicationKernel(__global float2 *Md,
     barrier(CLK_LOCAL_MEM_FENCE);
   }
 
-  Pd[row * (width / VECTOR_SIZE) + col] = thread_work;
+  Pd[row * (Z / VECTOR_SIZE) + col] = thread_work;
 }

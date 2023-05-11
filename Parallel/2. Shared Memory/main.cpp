@@ -91,7 +91,9 @@ void createKernel()
         void matrixMultiplicationKernel(__global float* Md, \
                                         __global float* Nd, \
                                         __global float* Pd, \
-                                        int width) { \
+                                        int X,\
+                                        int Y,\
+                                        int Z) { \
             \
             __local float Ml[TILE_SIZE][TILE_SIZE]; \
             __local float Nl[TILE_SIZE][TILE_SIZE]; \
@@ -102,9 +104,9 @@ void createKernel()
             int l_row = get_local_id(1); \
             \
             float sum = 0; \
-            for (int k = 0; k < (width/TILE_SIZE); k++) { \
-                Ml[l_row][l_col] = Md[row * width + (k * TILE_SIZE + l_col)]; \
-                Nl[l_row][l_col] = Nd[(k * TILE_SIZE + l_row) * width + col]; \
+            for (int k = 0; k < (Y/TILE_SIZE); k++) { \
+                Ml[l_row][l_col] = Md[row * Y + (k * TILE_SIZE + l_col)]; \
+                Nl[l_row][l_col] = Nd[(k * TILE_SIZE + l_row) * Z + col]; \
                 barrier(CLK_LOCAL_MEM_FENCE); \
                 \
                 for (int i = 0; i < TILE_SIZE; i++) { \
@@ -113,7 +115,7 @@ void createKernel()
                 barrier(CLK_LOCAL_MEM_FENCE); \
             } \
             \
-            Pd[row * width + col] = sum; \
+            Pd[row * Z + col] = sum; \
         }";
 
     size_t sourceLength = strlen(kernelSource);
@@ -130,37 +132,41 @@ void createKernel()
     checkError(err);
 }
 
-void matrixMultiplication(float *M, float *N, float *P, int width)
+void matrixMultiplication(float *M, float *N, float *P, int X, int Y, int Z)
 {
     cl_int err;
-    int size = width * width * sizeof(float);
+    int size_M = X * Y * sizeof(float);
+    int size_N = Y * Z * sizeof(float);
+    int size_P = X * Z * sizeof(float);
 
-    cl_mem Md = clCreateBuffer(context, CL_MEM_READ_ONLY, size, NULL, &err);
+    cl_mem Md = clCreateBuffer(context, CL_MEM_READ_ONLY, size_M, NULL, &err);
     checkError(err);
-    cl_mem Nd = clCreateBuffer(context, CL_MEM_READ_ONLY, size, NULL, &err);
-    checkError(err);
-
-    err = clEnqueueWriteBuffer(commandQueue, Md, CL_FALSE, 0, size, M, 0, NULL, NULL);
-    checkError(err);
-    err = clEnqueueWriteBuffer(commandQueue, Nd, CL_FALSE, 0, size, N, 0, NULL, NULL);
+    cl_mem Nd = clCreateBuffer(context, CL_MEM_READ_ONLY, size_N, NULL, &err);
     checkError(err);
 
-    cl_mem Pd = clCreateBuffer(context, CL_MEM_READ_WRITE, size, NULL, &err);
+    err = clEnqueueWriteBuffer(commandQueue, Md, CL_FALSE, 0, size_M, M, 0, NULL, NULL);
+    checkError(err);
+    err = clEnqueueWriteBuffer(commandQueue, Nd, CL_FALSE, 0, size_N, N, 0, NULL, NULL);
+    checkError(err);
+
+    cl_mem Pd = clCreateBuffer(context, CL_MEM_READ_WRITE, size_P, NULL, &err);
     checkError(err);
 
     err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &Md);
     err |= clSetKernelArg(kernel, 1, sizeof(cl_mem), &Nd);
     err |= clSetKernelArg(kernel, 2, sizeof(cl_mem), &Pd);
-    err |= clSetKernelArg(kernel, 3, sizeof(int), &width);
+    err |= clSetKernelArg(kernel, 3, sizeof(int), &X);
+    err |= clSetKernelArg(kernel, 4, sizeof(int), &Y);
+    err |= clSetKernelArg(kernel, 5, sizeof(int), &Z);
     checkError(err);
 
-    size_t globalSize[] = {width, width};
+    size_t globalSize[] = {Z, X};
     size_t localSize[] = {32, 32};
 
     err = clEnqueueNDRangeKernel(commandQueue, kernel, 2, NULL, globalSize, localSize, 0, NULL, NULL);
     checkError(err);
 
-    err = clEnqueueReadBuffer(commandQueue, Pd, CL_TRUE, 0, size, P, 0, NULL, NULL);
+    err = clEnqueueReadBuffer(commandQueue, Pd, CL_TRUE, 0, size_P, P, 0, NULL, NULL);
     checkError(err);
 }
 
@@ -179,9 +185,11 @@ int main(int argc, char **argv)
     WIDTH = getWidth(params);
     PLATFORM_ID = getPlatformId(params);
 
-    M = matrixInit(M, WIDTH, true);
-    N = matrixInit(N, WIDTH, true);
-    P = matrixInit(P, WIDTH, false);
+    int X = 1024, Y = 128, Z = 128;
+
+    M = matrixInit(M, X * Y, true);
+    N = matrixInit(N, Y * Z, true);
+    P = matrixInit(P, X * Z, false);
 
     initOpenCL(PLATFORM_ID);
     createKernel();
@@ -189,12 +197,12 @@ int main(int argc, char **argv)
     // Start time
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-    matrixMultiplication(M, N, P, WIDTH);
+    matrixMultiplication(M, N, P, X, Y, Z);
 
     // End time
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
-    checkSolution(P, WIDTH);
+    checkSolution(P, X * Z);
 
     // Free resources
     delete[] M;

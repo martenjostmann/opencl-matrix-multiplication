@@ -9,10 +9,10 @@
 #include <iostream>
 #include "../Utils/matrix_init.h"
 
-void checkSolution(float *f, int width)
+void checkSolution(float *f, int size)
 {
     int sum = 0;
-    int size = width * width;
+    ;
     for (int i = 0; i < size; i++)
     {
         sum += f[i];
@@ -31,13 +31,13 @@ void fill(float *f, int size)
     }
 }
 
-float *matrixInit(float *matrix, int width, bool fill_matrix)
+float *matrixInit(float *matrix, int size, bool fill_matrix)
 {
-    matrix = new float[width * width];
+    matrix = new float[size];
 
     if (fill_matrix)
     {
-        fill(matrix, width * width);
+        fill(matrix, size);
     }
 
     return matrix;

@@ -12,20 +12,32 @@
 
 #define WIDTH 1024
 
-void matrixMultiplication(float *M, float *N, float *P, int width)
+void matrixMultiplication(float *M, float *N, float *P, int X, int Y, int Z)
 {
 
-    for (int i = 0; i < width; i++)
+    for (int i = 0; i < X; i++)
     {
-        for (int j = 0; j < width; j++)
+        for (int j = 0; j < Z; j++)
         {
-            float sum = 0;
-            for (int k = 0; k < width; k++)
+            int sum = 0;
+            for (int k = 0; k < Y; k++)
             {
-                sum += M[i * width + k] * N[k * width + j];
+                sum += M[i * Y + k] * N[k * Z + j];
             }
-            P[i * width + j] = sum;
+            P[i * Z + j] = sum;
         }
+    }
+}
+
+void printMatrix(float *M, int X, int Y)
+{
+    for (int i = 0; i < X; i++)
+    {
+        for (int j = 0; j < Y; j++)
+        {
+            std::cout << M[i * Y + j] << " ";
+        }
+        std::cout << std::endl;
     }
 }
 
@@ -35,19 +47,21 @@ int main()
     float *N;
     float *P;
 
-    M = matrixInit(M, WIDTH, true);
-    N = matrixInit(N, WIDTH, true);
-    P = matrixInit(P, WIDTH, false);
+    int X = 3, Y = 3, Z = 3;
+
+    M = matrixInit(M, X * Y, true);
+    N = matrixInit(N, Y * Z, true);
+    P = matrixInit(P, X * Z, false);
 
     // Start time
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-    matrixMultiplication(M, N, P, WIDTH);
+    matrixMultiplication(M, N, P, X, Y, Z);
 
     // End time
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
-    checkSolution(P, WIDTH);
+    checkSolution(P, X * Z);
 
     // Free resources
     delete[] M;

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 #include "opencl_general.h"
 #include "../../Utils/general.h"
 

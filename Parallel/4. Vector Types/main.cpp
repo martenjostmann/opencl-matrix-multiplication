@@ -13,7 +13,7 @@
 #include "../../Utils/general.h"
 #include "../Utils/opencl_general.h"
 #include <CL/cl.h>
-#include "header.h"
+#include "properties.h"
 
 int main(int argc, char **argv)
 {
@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     float *P;
     std::tuple<int, int, int> XYZ;
     int PLATFORM_ID;
-    const char *KERNEL_PATH;
+    const char *KERNEL_PATH, *HEADER_PATH;
 
     // Parse arguments
     std::map<std::string, std::string> params = parseArgs(argc, argv);
@@ -31,6 +31,7 @@ int main(int argc, char **argv)
     XYZ = getXYZ(params);
     PLATFORM_ID = getPlatformId(params);
     KERNEL_PATH = getKernelPath(params);
+    HEADER_PATH = getHeaderPath(params);
 
     int X = std::get<0>(XYZ), Y = std::get<1>(XYZ), Z = std::get<2>(XYZ);
 
@@ -39,7 +40,7 @@ int main(int argc, char **argv)
     P = matrixInit(P, X * Z, false);
 
     initOpenCL(PLATFORM_ID);
-    createKernel(KERNEL_PATH);
+    createKernel(KERNEL_PATH, HEADER_PATH);
 
     size_t globalSize[] = {Z / VECTOR_SIZE, X};
     size_t localSize[] = {TILE_SIZE / VECTOR_SIZE, TILE_SIZE};

@@ -1,5 +1,3 @@
-#include <header.h>
-
 __kernel void matrixMultiplicationKernel(__global float *Md, __global float *Nd,
                                          __global float *Pd, int X, int Y,
                                          int Z) {
@@ -24,5 +22,5 @@ __kernel void matrixMultiplicationKernel(__global float *Md, __global float *Nd,
     barrier(CLK_LOCAL_MEM_FENCE);
   }
 
-  Pd[row * Z + col] = sum;
+  Pd[row * Z + col] = TILE_SIZE;
 }

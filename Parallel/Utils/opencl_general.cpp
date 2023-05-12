@@ -66,14 +66,25 @@ void printBuildLog(cl_program program, cl_device_id device)
     free(build_log);
 }
 
-void createKernel(const char *kernel_path)
+void createKernel(const char *kernel_path, const char *header_path)
 {
     cl_int err;
 
-    long kernel_size;
+    long kernel_size, size_header;
 
-    char *kernelSource = readKernel(kernel_path, &kernel_size);
-    const char *constCode = kernelSource;
+    char *source = readKernel(kernel_path, &kernel_size);
+    char *header = readKernel(header_path, &size_header);
+    long size = 2 + kernel_size + size_header;
+    char *code = (char *)malloc(size * sizeof(char));
+    for (int c = 0; c < size; c++)
+    {
+        code[c] = '\0';
+    }
+    strcat(code, header);
+    strcat(code, source);
+    const char *constCode = code;
+    free(header);
+    free(source);
 
     cl_program program;
     program = clCreateProgramWithSource(context, 1, &constCode, NULL, &err);

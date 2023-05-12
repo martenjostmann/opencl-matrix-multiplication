@@ -123,3 +123,16 @@ const char *getKernelPath(std::map<std::string, std::string> params)
         return params["k"].c_str();
     }
 }
+
+const char *getHeaderPath(std::map<std::string, std::string> params)
+{
+    if (params.find("h") == params.end())
+    {
+        std::cout << "The header path is not specified. Please specify it with -h (Using standard \"properties.h\")" << std::endl;
+        return "properties.h";
+    }
+    else
+    {
+        return params["h"].c_str();
+    }
+}

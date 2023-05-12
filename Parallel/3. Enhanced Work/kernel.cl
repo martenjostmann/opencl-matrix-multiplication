@@ -1,4 +1,3 @@
-#include <header.h>
 __kernel void matrixMultiplicationKernel(__global float *Md, __global float *Nd,
                                          __global float *Pd, int X, int Y,
                                          int Z) {

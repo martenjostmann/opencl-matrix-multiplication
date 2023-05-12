@@ -71,9 +71,21 @@ void createKernel(const char *kernel_path, const char *header_path)
     cl_int err;
 
     long kernel_size, size_header;
+    char *header = NULL;
 
     char *source = readKernel(kernel_path, &kernel_size);
-    char *header = readKernel(header_path, &size_header);
+
+    if (header_path != NULL)
+    {
+        header = readKernel(header_path, &size_header);
+    }
+    else
+    {
+        size_header = 0;
+        header = new char[1];
+        header[0] = '\0';
+    }
+
     long size = 2 + kernel_size + size_header;
     char *code = (char *)malloc(size * sizeof(char));
     for (int c = 0; c < size; c++)
@@ -85,7 +97,6 @@ void createKernel(const char *kernel_path, const char *header_path)
     const char *constCode = code;
     free(header);
     free(source);
-
     cl_program program;
     program = clCreateProgramWithSource(context, 1, &constCode, NULL, &err);
     checkError(err);

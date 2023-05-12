@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     P = matrixInit(P, X * Z, false);
 
     initOpenCL(PLATFORM_ID);
-    createKernel(KERNEL_PATH);
+    createKernel(KERNEL_PATH, NULL);
 
     size_t globalSize[] = {Z, X};
     size_t localSize[] = {32, 32};

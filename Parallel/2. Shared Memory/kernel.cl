@@ -22,5 +22,5 @@ __kernel void matrixMultiplicationKernel(__global float *Md, __global float *Nd,
     barrier(CLK_LOCAL_MEM_FENCE);
   }
 
-  Pd[row * Z + col] = TILE_SIZE;
+  Pd[row * Z + col] = sum;
 }

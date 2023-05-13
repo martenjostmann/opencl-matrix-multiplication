@@ -3,8 +3,8 @@
 
 void checkSolution(float *, int);
 
-void fill(float *, int);
+void fill(float *, int, int);
 
-float *matrixInit(float *, int, bool);
+float *matrixInit(float *, int, bool, int = 2);
 
 #endif

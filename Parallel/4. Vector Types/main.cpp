@@ -35,8 +35,8 @@ int main(int argc, char **argv)
 
     int X = std::get<0>(XYZ), Y = std::get<1>(XYZ), Z = std::get<2>(XYZ);
 
-    M = matrixInit(M, X * Y, true);
-    N = matrixInit(N, Y * Z, true);
+    M = matrixInit(M, X * Y, true, 2);
+    N = matrixInit(N, Y * Z, true, 3);
     P = matrixInit(P, X * Z, false);
 
     initOpenCL(PLATFORM_ID);

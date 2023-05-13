@@ -11,8 +11,7 @@
 
 void checkSolution(float *f, int size)
 {
-    int sum = 0;
-    ;
+    float sum = 0;
     for (int i = 0; i < size; i++)
     {
         sum += f[i];
@@ -21,23 +20,23 @@ void checkSolution(float *f, int size)
     std::cout << sum << std::endl;
 }
 
-void fill(float *f, int size)
+void fill(float *f, int size, int seed)
 {
-    srand(2);
+    srand(seed);
 
     for (int i = 0; i < size; i++)
     {
-        f[i] = (float)(rand() % 100);
+        f[i] = (float(rand()) / float((RAND_MAX)));
     }
 }
 
-float *matrixInit(float *matrix, int size, bool fill_matrix)
+float *matrixInit(float *matrix, int size, bool fill_matrix, int seed = 2)
 {
     matrix = new float[size];
 
     if (fill_matrix)
     {
-        fill(matrix, size);
+        fill(matrix, size, seed);
     }
 
     return matrix;

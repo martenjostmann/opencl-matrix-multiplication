@@ -15,7 +15,7 @@
 #SBATCH --mem=0
 
 partition=gpu2080
-implementation="native"
+implementation="Baseline"
 dirname=$(date +"%Y-%m-%dT%H-%M-%S-${partition}-${implementation}")
 
 module --force purge
@@ -33,8 +33,8 @@ buildname=build-${partition}
 
 g++ -std=c++11 "${code_path}${job}/main.cpp" ${code_path}/Utils/matrix_init.cpp ${code_path}/Utils/general.cpp ${code_path}/Parallel/Utils/opencl_general.cpp -lOpenCL -o "${code_path}${job}/main"
 
-for device in "GPU", "CPU"; do
-    for width in 512, 1024, 2048; do
+for device in "GPU" "CPU"; do
+    for width in 512 1024 2048; do
         for iteration in {1..5}; do
             if [[ "$device" == "GPU" ]]; then
                 platform=1
@@ -42,7 +42,7 @@ for device in "GPU", "CPU"; do
                 platform=0
             fi
 
-            paramname="${width}x${width}-device${device}"
+            paramname="${width}-${width}-${device}"
             "${code_path}${job}/main" -x $width -y $width -z $width -p $platform -k "${code_path}${job}/kernel.cl" >> "${output_path}/${paramname}.out"
         done
     done

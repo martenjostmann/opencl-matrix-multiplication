@@ -43,7 +43,11 @@ for device in "GPU" "CPU"; do
             fi
 
             paramname="${width}-${width}-${device}"
-            "${code_path}${job}/main" -x $width -y $width -z $width -p $platform -d $device -k "${code_path}${job}/kernel.cl" >> "${output_path}/${paramname}.out"
+            if [[ "$job" == "/Parallel/1. Baseline" ]]; then
+                "${code_path}${job}/main" -x $width -y $width -z $width -p $platform -d $device -k "${code_path}${job}/kernel.cl" >> "${output_path}/${paramname}.out"
+            else
+                "${code_path}${job}/main" -x $width -y $width -z $width -p $platform -d $device -k "${code_path}${job}/kernel.cl" -h "${code_path}${job}/properties.h"  >> "${output_path}/${paramname}.out"
+            fi
         done
     done
 done

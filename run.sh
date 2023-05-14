@@ -35,7 +35,7 @@ g++ -std=c++11 "${code_path}${job}/main.cpp" ${code_path}/Utils/matrix_init.cpp 
 
 for device in "GPU" "CPU"; do
     for width in 512 1024 2048; do
-        for iteration in {1..5}; do
+        for iteration in {1..11}; do
             if [[ "$device" == "GPU" ]]; then
                 platform=1
             else

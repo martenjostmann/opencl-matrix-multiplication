@@ -30,7 +30,7 @@ void fill(float *f, int size, int seed)
     }
 }
 
-float *matrixInit(float *matrix, int size, bool fill_matrix, int seed = 2)
+float *matrixInit(float *matrix, int size, bool fill_matrix, int seed)
 {
     matrix = new float[size];
 

@@ -33,7 +33,17 @@ buildname=build-${partition}
 
 g++ -std=c++11 "${code_path}${job}/main.cpp" ${code_path}/Utils/matrix_init.cpp ${code_path}/Utils/general.cpp ${code_path}/Parallel/Utils/opencl_general.cpp -lOpenCL -o "${code_path}${job}/main"
 
-for width in 1024, 2048; do
-    paramname="${width}x${width}-g${gpu}"
-    "${code_path}${job}/main" -x $width -y $width -z $width -p 1 -k "${code_path}${job}/kernel.cl" >> "${output_path}/native.out"
+for device in "GPU", "CPU"; do
+    for width in 512, 1024, 2048; do
+        for iteration in {1..5}; do
+            if [[ "$device" == "GPU" ]]; then
+                platform=1
+            else
+                platform=0
+            fi
+
+            paramname="${width}x${width}-device${device}"
+            "${code_path}${job}/main" -x $width -y $width -z $width -p $platform -k "${code_path}${job}/kernel.cl" >> "${output_path}/${paramname}.out"
+        done
+    done
 done

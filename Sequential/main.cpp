@@ -20,7 +20,7 @@ void matrixMultiplication(float *M, float *N, float *P, int X, int Y, int Z)
     {
         for (int j = 0; j < Z; j++)
         {
-            int sum = 0;
+            float sum = 0;
             for (int k = 0; k < Y; k++)
             {
                 sum += M[i * Y + k] * N[k * Z + j];
@@ -57,8 +57,8 @@ int main(int argc, char **argv)
 
     int X = std::get<0>(XYZ), Y = std::get<1>(XYZ), Z = std::get<2>(XYZ);
 
-    M = matrixInit(M, X * Y, true);
-    N = matrixInit(N, Y * Z, true);
+    M = matrixInit(M, X * Y, true, 2);
+    N = matrixInit(N, Y * Z, true, 3);
     P = matrixInit(P, X * Z, false);
 
     // Start time

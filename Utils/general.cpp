@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <CL/cl.h>
 
 char *readKernel(const char *filename, long *size)
 {
@@ -108,6 +109,33 @@ int getPlatformId(std::map<std::string, std::string> params)
     else
     {
         return std::stoi(params["p"]);
+    }
+}
+
+cl_device_type getDeviceType(std::map<std::string, std::string> params)
+{
+    if (params.find("d") == params.end())
+    {
+        std::cout << "The OpenCL device type is not specified. Please specify it with -d (Using standard CL_DEVICE_TYPE_GPU)" << std::endl;
+        return CL_DEVICE_TYPE_GPU;
+    }
+    else
+    {
+        std::string device_type = params["d"];
+        if (device_type == "GPU")
+        {
+            return CL_DEVICE_TYPE_GPU;
+        }
+        else if (device_type == "CPU")
+        {
+            return CL_DEVICE_TYPE_CPU;
+        }
+        else
+        {
+            std::cerr << "Invalid device type: " << device_type << std::endl;
+            std::cerr << "Valid options are 'CPU' and 'GPU'" << std::endl;
+            exit(EXIT_FAILURE);
+        }
     }
 }
 

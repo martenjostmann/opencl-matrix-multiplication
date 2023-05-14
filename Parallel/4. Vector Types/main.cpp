@@ -23,6 +23,7 @@ int main(int argc, char **argv)
     std::tuple<int, int, int> XYZ;
     int PLATFORM_ID;
     const char *KERNEL_PATH, *HEADER_PATH;
+    cl_device_type DEVICE_TYPE;
 
     // Parse arguments
     std::map<std::string, std::string> params = parseArgs(argc, argv);
@@ -32,6 +33,7 @@ int main(int argc, char **argv)
     PLATFORM_ID = getPlatformId(params);
     KERNEL_PATH = getKernelPath(params);
     HEADER_PATH = getHeaderPath(params);
+    DEVICE_TYPE = getDeviceType(params);
 
     int X = std::get<0>(XYZ), Y = std::get<1>(XYZ), Z = std::get<2>(XYZ);
 
@@ -39,7 +41,7 @@ int main(int argc, char **argv)
     N = matrixInit(N, Y * Z, true, 3);
     P = matrixInit(P, X * Z, false);
 
-    initOpenCL(PLATFORM_ID);
+    initOpenCL(PLATFORM_ID, DEVICE_TYPE);
     createKernel(KERNEL_PATH, HEADER_PATH);
 
     size_t globalSize[] = {Z / VECTOR_SIZE, X};

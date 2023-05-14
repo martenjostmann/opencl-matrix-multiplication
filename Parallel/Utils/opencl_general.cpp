@@ -15,7 +15,7 @@ void checkError(cl_int err)
         printf("Error with errorcode: %d\n", err);
 }
 
-void initOpenCL(int platform_id)
+void initOpenCL(int platform_id, cl_device_type device_type)
 {
     cl_int err;
     cl_uint numPlatforms;
@@ -36,7 +36,7 @@ void initOpenCL(int platform_id)
     free(platformList);
 
     // Get device
-    err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 2, &device, NULL);
+    err = clGetDeviceIDs(platform, device_type, 2, &device, NULL);
     checkError(err);
 
     // Create context for device

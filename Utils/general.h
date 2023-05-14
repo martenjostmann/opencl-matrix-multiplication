@@ -2,6 +2,7 @@
 #define GENERAL_H
 #include <string>
 #include <map>
+#include <CL/cl.h>
 
 char *readKernel(const char *, long *);
 
@@ -14,5 +15,7 @@ int getPlatformId(std::map<std::string, std::string>);
 const char *getKernelPath(std::map<std::string, std::string>);
 
 const char *getHeaderPath(std::map<std::string, std::string>);
+
+cl_device_type getDeviceType(std::map<std::string, std::string>);
 
 #endif

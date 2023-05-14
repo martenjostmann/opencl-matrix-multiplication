@@ -14,8 +14,8 @@
 #SBATCH --mail-user=m_jost02@uni-muenster.de
 #SBATCH --mem=0
 
-partition=gpu2080
-implementation="Baseline"
+partition=cpu
+implementation="sequential"
 dirname=$(date +"%Y-%m-%dT%H-%M-%S-${partition}-${implementation}")
 
 module --force purge
@@ -25,25 +25,19 @@ ml CUDA/11.7.0
 #cd /scratch/tmp/m_jost02/parallel_programming
 
 code_path="/scratch/tmp/m_jost02/parallel_programming"
-job="/Parallel/1. Baseline"
+job="/Sequential"
 output_path=/scratch/tmp/m_jost02/output/${dirname}
 mkdir -p "$output_path"
 
 buildname=build-${partition}
 
-g++ -std=c++11 "${code_path}${job}/main.cpp" ${code_path}/Utils/matrix_init.cpp ${code_path}/Utils/general.cpp ${code_path}/Parallel/Utils/opencl_general.cpp -lOpenCL -o "${code_path}${job}/main"
+g++ -std=c++11 "${code_path}${job}/main.cpp" ${code_path}/Utils/matrix_init.cpp ${code_path}/Utils/general.cpp -o "${code_path}${job}/main"
 
-for device in "GPU" "CPU"; do
-    for width in 512 1024 2048; do
-        for iteration in {1..12}; do
-            if [[ "$device" == "GPU" ]]; then
-                platform=1
-            else
-                platform=0
-            fi
 
-            paramname="${width}-${width}-${device}"
-            "${code_path}${job}/main" -x $width -y $width -z $width -p $platform -d $device -k "${code_path}${job}/kernel.cl" >> "${output_path}/${paramname}.out"
-        done
+for width in 512 1024 2048; do
+    for iteration in {1..12}; do
+
+        paramname="${width}-${width}-${device}"
+        "${code_path}${job}/main" -x $width -y $width -z $width >> "${output_path}/${paramname}.out"
     done
 done

@@ -43,7 +43,7 @@ for device in "GPU" "CPU"; do
             fi
 
             paramname="${width}-${width}-${device}"
-            "${code_path}${job}/main" -x $width -y $width -z $width -p $platform -k "${code_path}${job}/kernel.cl" >> "${output_path}/${paramname}.out"
+            "${code_path}${job}/main" -x $width -y $width -z $width -p $platform -d $device -k "${code_path}${job}/kernel.cl" >> "${output_path}/${paramname}.out"
         done
     done
 done

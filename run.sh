@@ -24,7 +24,7 @@ ml CUDA/11.7.0
 
 code_path="/scratch/tmp/m_jost02/parallel_programming"
 
-for impl "1. Baseline" "2. Shared Memory" "3. Enhanced Work" "4. Vector Types"; do
+for impl in "1. Baseline" "2. Shared Memory" "3. Enhanced Work" "4. Vector Types"; do
     
     dirname=$(date +"%Y-%m-%dT%H-%M-%S-${partition}-${impl}")
     job="/Parallel/${impl}"

@@ -36,7 +36,7 @@ for impl "1. Baseline" "2. Shared Memory" "3. Enhanced Work" "4. Vector Types"; 
     g++ -std=c++11 "${code_path}${job}/main.cpp" ${code_path}/Utils/matrix_init.cpp ${code_path}/Utils/general.cpp ${code_path}/Parallel/Utils/opencl_general.cpp -lOpenCL -o "${code_path}${job}/main"
 
     for device in "GPU" "CPU"; do
-        for width in 512 1024 2048; do
+        for width in 512 1024 2048 3072 4096 5120; do
             for iteration in {1..12}; do
                 if [[ "$device" == "GPU" ]]; then
                     platform=1

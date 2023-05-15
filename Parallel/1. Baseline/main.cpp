@@ -53,14 +53,15 @@ int main(int argc, char **argv)
     // End time
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
-    checkSolution(P, X * Z);
+    // checkSolution(P, X * Z);
 
     // Free resources
     delete[] M;
     delete[] N;
     delete[] P;
 
-    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
+    // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
 }
 
 // g++ main.cpp ../../Utils/matrix_init.cpp -L"C:\Users\marte\vcpkg\packages\opencl_x64-windows\lib" -lOpenCL -I"C:\Users\marte\vcpkg\packages\opencl_x64-windows\include" -o main

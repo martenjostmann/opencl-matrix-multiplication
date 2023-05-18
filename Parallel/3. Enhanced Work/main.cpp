@@ -46,7 +46,7 @@ int main(int argc, char **argv)
     createKernel(KERNEL_PATH, HEADER_PATH);
 
     size_t globalSize[] = {Z / THREAD_WORK_SIZE, X};
-    size_t localSize[] = {32 / THREAD_WORK_SIZE, 32};
+    size_t localSize[] = {TILE_SIZE / THREAD_WORK_SIZE, TILE_SIZE};
 
     // Start time
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();

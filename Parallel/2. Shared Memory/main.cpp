@@ -13,6 +13,7 @@
 #include "../../Utils/general.h"
 #include "../Utils/opencl_general.h"
 #include <CL/cl.h>
+#include "properties.h"
 
 int main(int argc, char **argv)
 {
@@ -44,7 +45,7 @@ int main(int argc, char **argv)
     createKernel(KERNEL_PATH, HEADER_PATH);
 
     size_t globalSize[] = {Z, X};
-    size_t localSize[] = {32, 32};
+    size_t localSize[] = {TILE_SIZE, TILE_SIZE};
 
     // Start time
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();

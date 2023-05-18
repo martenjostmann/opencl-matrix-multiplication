@@ -1,5 +1,8 @@
 __kernel void matrixMultiplicationKernel(__global float *Md, __global float *Nd,
-                                         __global float *Pd, int X, int Y, int Z) {
+                                         __global float *Pd, int X, int Y,
+                                         int Z) {
+
+  // Get the row and column of Pd element to be calculated
   int col = get_global_id(0);
   int row = get_global_id(1);
 

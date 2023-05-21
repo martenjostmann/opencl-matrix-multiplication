@@ -117,22 +117,22 @@ void matrixMultiplication(float *M, float *N, float *P, int X, int Y, int Z, siz
     int size_N = Y * Z * sizeof(float);
     int size_P = X * Z * sizeof(float);
 
-    cl_mem Md = clCreateBuffer(context, CL_MEM_READ_ONLY, size_M, NULL, &err);
+    cl_mem Ad = clCreateBuffer(context, CL_MEM_READ_ONLY, size_M, NULL, &err);
     checkError(err);
-    cl_mem Nd = clCreateBuffer(context, CL_MEM_READ_ONLY, size_N, NULL, &err);
-    checkError(err);
-
-    err = clEnqueueWriteBuffer(commandQueue, Md, CL_FALSE, 0, size_M, M, 0, NULL, NULL);
-    checkError(err);
-    err = clEnqueueWriteBuffer(commandQueue, Nd, CL_FALSE, 0, size_N, N, 0, NULL, NULL);
+    cl_mem Bd = clCreateBuffer(context, CL_MEM_READ_ONLY, size_N, NULL, &err);
     checkError(err);
 
-    cl_mem Pd = clCreateBuffer(context, CL_MEM_READ_WRITE, size_P, NULL, &err);
+    err = clEnqueueWriteBuffer(commandQueue, Ad, CL_FALSE, 0, size_M, M, 0, NULL, NULL);
+    checkError(err);
+    err = clEnqueueWriteBuffer(commandQueue, Bd, CL_FALSE, 0, size_N, N, 0, NULL, NULL);
     checkError(err);
 
-    err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &Md);
-    err |= clSetKernelArg(kernel, 1, sizeof(cl_mem), &Nd);
-    err |= clSetKernelArg(kernel, 2, sizeof(cl_mem), &Pd);
+    cl_mem Cd = clCreateBuffer(context, CL_MEM_READ_WRITE, size_P, NULL, &err);
+    checkError(err);
+
+    err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &Ad);
+    err |= clSetKernelArg(kernel, 1, sizeof(cl_mem), &Bd);
+    err |= clSetKernelArg(kernel, 2, sizeof(cl_mem), &Cd);
     err |= clSetKernelArg(kernel, 3, sizeof(int), &X);
     err |= clSetKernelArg(kernel, 4, sizeof(int), &Y);
     err |= clSetKernelArg(kernel, 5, sizeof(int), &Z);
@@ -141,6 +141,6 @@ void matrixMultiplication(float *M, float *N, float *P, int X, int Y, int Z, siz
     err = clEnqueueNDRangeKernel(commandQueue, kernel, 2, NULL, globalSize, localSize, 0, NULL, NULL);
     checkError(err);
 
-    err = clEnqueueReadBuffer(commandQueue, Pd, CL_TRUE, 0, size_P, P, 0, NULL, NULL);
+    err = clEnqueueReadBuffer(commandQueue, Cd, CL_TRUE, 0, size_P, P, 0, NULL, NULL);
     checkError(err);
 }

@@ -17,9 +17,9 @@
 
 int main(int argc, char **argv)
 {
-    float *M;
-    float *N;
-    float *P;
+    float *A;
+    float *B;
+    float *C;
     std::tuple<int, int, int> XYZ;
     int PLATFORM_ID;
     const char *KERNEL_PATH, *HEADER_PATH;
@@ -37,9 +37,9 @@ int main(int argc, char **argv)
 
     int X = std::get<0>(XYZ), Y = std::get<1>(XYZ), Z = std::get<2>(XYZ);
 
-    M = matrixInit(M, X * Y, true, 2);
-    N = matrixInit(N, Y * Z, true, 3);
-    P = matrixInit(P, X * Z, false);
+    A = matrixInit(A, X * Y, true, 2);
+    B = matrixInit(B, Y * Z, true, 3);
+    C = matrixInit(C, X * Z, false);
 
     initOpenCL(PLATFORM_ID, DEVICE_TYPE);
     createKernel(KERNEL_PATH, HEADER_PATH);
@@ -50,20 +50,17 @@ int main(int argc, char **argv)
     // Start time
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-    matrixMultiplication(M, N, P, X, Y, Z, globalSize, localSize);
+    matrixMultiplication(A, B, C, X, Y, Z, globalSize, localSize);
 
     // End time
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
-    // checkSolution(P, X * Z);
+    checkSolution(C, X * Z);
 
     // Free resources
-    delete[] M;
-    delete[] N;
-    delete[] P;
+    delete[] A;
+    delete[] B;
+    delete[] C;
 
-    // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
-    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
 }
-
-// g++ main.cpp ../../Utils/matrix_init.cpp -L"C:\Users\marte\vcpkg\packages\opencl_x64-windows\lib" -lOpenCL -I"C:\Users\marte\vcpkg\packages\opencl_x64-windows\include" -o main

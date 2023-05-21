@@ -1,13 +1,13 @@
-__kernel void matrixMultiplicationKernel(__global float2 *Md,
-                                         __global float2 *Nd,
-                                         __global float2 *Pd, int X, int Y,
+__kernel void matrixMultiplicationKernel(__global float2 *Ad,
+                                         __global float2 *Bd,
+                                         __global float2 *Cd, int X, int Y,
                                          int Z) {
 
   // Initialize the local memory tiles
-  __local float2 Ml[TILE_SIZE][TILE_SIZE / VECTOR_SIZE];
-  __local float2 Nl[TILE_SIZE][TILE_SIZE / VECTOR_SIZE];
+  __local float2 Al[TILE_SIZE][TILE_SIZE / VECTOR_SIZE];
+  __local float2 Bl[TILE_SIZE][TILE_SIZE / VECTOR_SIZE];
 
-  // Get the row and column of Pd element to be calculated
+  // Get the row and column of Cd element to be calculated
   int col = get_global_id(0);
   int row = get_global_id(1);
   int l_col = get_local_id(0);
@@ -21,9 +21,9 @@ __kernel void matrixMultiplicationKernel(__global float2 *Md,
   // Iterate over each tile
   for (int k = 0; k < (Y / TILE_SIZE); k++) {
 
-    Ml[l_row][l_col] =
-        Md[row * (Y / VECTOR_SIZE) + (k * (TILE_SIZE / VECTOR_SIZE) + l_col)];
-    Nl[l_row][l_col] = Nd[(k * TILE_SIZE + l_row) * (Z / VECTOR_SIZE) + col];
+    Al[l_row][l_col] =
+        Ad[row * (Y / VECTOR_SIZE) + (k * (TILE_SIZE / VECTOR_SIZE) + l_col)];
+    Bl[l_row][l_col] = Bd[(k * TILE_SIZE + l_row) * (Z / VECTOR_SIZE) + col];
 
     // Synchronize to make sure the tile is loaded
     barrier(CLK_LOCAL_MEM_FENCE);
@@ -34,13 +34,13 @@ __kernel void matrixMultiplicationKernel(__global float2 *Md,
     // Iterate over the columns
     for (int i = 0; i < TILE_SIZE / VECTOR_SIZE; i++) {
 
-      vecA = Ml[l_row][i];
+      vecA = Al[l_row][i];
 
       // Iterate over the rows
       for (int j = 0; j < VECTOR_SIZE; j++) {
 
-        // Get correct vector of Nl
-        vecB = Nl[VECTOR_SIZE * i + j][l_col];
+        // Get correct vector of Bl
+        vecB = Bl[VECTOR_SIZE * i + j][l_col];
 
         // Switch is used to get correct value from vector A depending on which
         // thread_work element is calculated
@@ -59,5 +59,5 @@ __kernel void matrixMultiplicationKernel(__global float2 *Md,
     barrier(CLK_LOCAL_MEM_FENCE);
   }
 
-  Pd[row * (Z / VECTOR_SIZE) + col] = thread_work;
+  Cd[row * (Z / VECTOR_SIZE) + col] = thread_work;
 }

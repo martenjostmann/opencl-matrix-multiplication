@@ -1,12 +1,12 @@
-__kernel void matrixMultiplicationKernel(__global float *Md, __global float *Nd,
-                                         __global float *Pd, int X, int Y,
+__kernel void matrixMultiplicationKernel(__global float *Ad, __global float *Bd,
+                                         __global float *Cd, int X, int Y,
                                          int Z) {
 
   // Initialize the local memory tiles
-  __local float Ml[TILE_SIZE][TILE_SIZE];
-  __local float Nl[TILE_SIZE][TILE_SIZE];
+  __local float Al[TILE_SIZE][TILE_SIZE];
+  __local float Bl[TILE_SIZE][TILE_SIZE];
 
-  // Get the row and column of Pd element to be calculated
+  // Get the row and column of Cd element to be calculated
   int col = get_global_id(0);
   int row = get_global_id(1);
   int l_col = get_local_id(0);
@@ -25,10 +25,10 @@ __kernel void matrixMultiplicationKernel(__global float *Md, __global float *Nd,
 
     // Load THREAD_WORK_SIZE elements into local memory
     for (int l = 0; l < THREAD_WORK_SIZE; l++) {
-      Ml[l_row][l_col * THREAD_WORK_SIZE + l] =
-          Md[row * Y + (k * TILE_SIZE + l_col * THREAD_WORK_SIZE + l)];
-      Nl[l_row][l_col * THREAD_WORK_SIZE + l] =
-          Nd[(k * TILE_SIZE + l_row) * Z + col * THREAD_WORK_SIZE + l];
+      Al[l_row][l_col * THREAD_WORK_SIZE + l] =
+          Ad[row * Y + (k * TILE_SIZE + l_col * THREAD_WORK_SIZE + l)];
+      Bl[l_row][l_col * THREAD_WORK_SIZE + l] =
+          Bd[(k * TILE_SIZE + l_row) * Z + col * THREAD_WORK_SIZE + l];
     }
 
     // Synchronize to make sure the matrices are loaded
@@ -37,13 +37,13 @@ __kernel void matrixMultiplicationKernel(__global float *Md, __global float *Nd,
     // Multiply the two matrices together;
     for (int i = 0; i < TILE_SIZE; i++) {
       for (int j = 0; j < THREAD_WORK_SIZE; j++) {
-        thread_work[j] += Ml[l_row][i] * Nl[i][l_col * THREAD_WORK_SIZE + j];
+        thread_work[j] += Al[l_row][i] * Bl[i][l_col * THREAD_WORK_SIZE + j];
       }
     }
     barrier(CLK_LOCAL_MEM_FENCE);
   }
 
   for (int i = 0; i < THREAD_WORK_SIZE; i++) {
-    Pd[row * Z + col * THREAD_WORK_SIZE + i] = thread_work[i];
+    Cd[row * Z + col * THREAD_WORK_SIZE + i] = thread_work[i];
   }
 }

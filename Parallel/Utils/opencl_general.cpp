@@ -1,3 +1,12 @@
+//***************************************************************************
+//  File:   opencl_general.cpp
+//  Author: Marten Jostmann
+//
+//  This file includes general functions to mange the OpenCL environment
+//  used in the different implementations.
+//
+//***************************************************************************
+
 #include <iostream>
 #include <cstring>
 #include "opencl_general.h"
@@ -8,6 +17,7 @@ cl_device_id device;
 cl_context context;
 cl_command_queue commandQueue;
 cl_kernel kernel;
+cl_program program;
 
 void checkError(cl_int err)
 {
@@ -21,27 +31,36 @@ char *readKernel(const char *filename, long *size)
     char *source_str;
     size_t source_size, program_size;
 
+    // Opens the kernel file
     fp = fopen(filename, "r");
+
+    // Check for open issues
     if (!fp)
     {
         printf("Failed to load kernel\n");
         exit(1);
     }
 
+    // Get the size of the file
     fseek(fp, 0, SEEK_END);
     program_size = ftell(fp);
     rewind(fp);
 
+    // Allocate memory for the kernel
     source_str = (char *)malloc(program_size + 1);
+
+    // Set the last char to '\0'
     for (int i = 0; i < program_size + 1; i++)
     {
         source_str[i] = '\0';
     }
 
+    // Read the kernel into the memory
     fread(source_str, sizeof(char), program_size, fp);
     fclose(fp);
 
     *size = (program_size + 1);
+
     return source_str;
 }
 
@@ -84,11 +103,14 @@ void printBuildLog(cl_program program, cl_device_id device)
     char *build_log;
     size_t build_log_size;
 
+    // Get size of build log
     err = clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, 0, NULL, &build_log_size);
     checkError(err);
 
+    // Allocate memory for build log
     build_log = (char *)malloc(build_log_size);
 
+    // Get build log
     err = clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, build_log_size, build_log, NULL);
     checkError(err);
 
@@ -106,6 +128,7 @@ void createKernel(const char *kernel_path, const char *header_path)
 
     char *source = readKernel(kernel_path, &kernel_size);
 
+    // if heaer path is specified, read it
     if (header_path != NULL)
     {
         header = readKernel(header_path, &size_header);
@@ -117,47 +140,61 @@ void createKernel(const char *kernel_path, const char *header_path)
         header[0] = '\0';
     }
 
+    // Calculate size of kernel code and allocate memory
     long size = 2 + kernel_size + size_header;
     char *code = (char *)malloc(size * sizeof(char));
+
+    // Set all elements to '\0'
     for (int c = 0; c < size; c++)
     {
         code[c] = '\0';
     }
+
+    // Concatenate header and source code
     strcat(code, header);
     strcat(code, source);
+
     const char *constCode = code;
+
     free(header);
     free(source);
-    cl_program program;
+
+    // Create program from source code
     program = clCreateProgramWithSource(context, 1, &constCode, NULL, &err);
     checkError(err);
 
+    // Compile program
     err = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
-    if (err != CL_SUCCESS)
-        printBuildLog(program, device);
 
+    // Check for errors
+    if (err != CL_SUCCESS)
+    {
+        printBuildLog(program, device);
+    }
+
+    // Create kernel from program
     kernel = clCreateKernel(program, "matrixMultiplicationKernel", &err);
     checkError(err);
 }
 
-void matrixMultiplication(float *M, float *N, float *P, int X, int Y, int Z, size_t globalSize[], size_t localSize[])
+void matrixMultiplication(float *A, float *B, float *C, int X, int Y, int Z, size_t globalSize[], size_t localSize[])
 {
     cl_int err;
-    int size_M = X * Y * sizeof(float);
-    int size_N = Y * Z * sizeof(float);
-    int size_P = X * Z * sizeof(float);
+    int size_A = X * Y * sizeof(float);
+    int size_B = Y * Z * sizeof(float);
+    int size_C = X * Z * sizeof(float);
 
-    cl_mem Ad = clCreateBuffer(context, CL_MEM_READ_ONLY, size_M, NULL, &err);
+    cl_mem Ad = clCreateBuffer(context, CL_MEM_READ_ONLY, size_A, NULL, &err);
     checkError(err);
-    cl_mem Bd = clCreateBuffer(context, CL_MEM_READ_ONLY, size_N, NULL, &err);
-    checkError(err);
-
-    err = clEnqueueWriteBuffer(commandQueue, Ad, CL_FALSE, 0, size_M, M, 0, NULL, NULL);
-    checkError(err);
-    err = clEnqueueWriteBuffer(commandQueue, Bd, CL_FALSE, 0, size_N, N, 0, NULL, NULL);
+    cl_mem Bd = clCreateBuffer(context, CL_MEM_READ_ONLY, size_B, NULL, &err);
     checkError(err);
 
-    cl_mem Cd = clCreateBuffer(context, CL_MEM_READ_WRITE, size_P, NULL, &err);
+    err = clEnqueueWriteBuffer(commandQueue, Ad, CL_FALSE, 0, size_A, A, 0, NULL, NULL);
+    checkError(err);
+    err = clEnqueueWriteBuffer(commandQueue, Bd, CL_FALSE, 0, size_B, B, 0, NULL, NULL);
+    checkError(err);
+
+    cl_mem Cd = clCreateBuffer(context, CL_MEM_READ_WRITE, size_C, NULL, &err);
     checkError(err);
 
     err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &Ad);
@@ -171,6 +208,6 @@ void matrixMultiplication(float *M, float *N, float *P, int X, int Y, int Z, siz
     err = clEnqueueNDRangeKernel(commandQueue, kernel, 2, NULL, globalSize, localSize, 0, NULL, NULL);
     checkError(err);
 
-    err = clEnqueueReadBuffer(commandQueue, Cd, CL_TRUE, 0, size_P, P, 0, NULL, NULL);
+    err = clEnqueueReadBuffer(commandQueue, Cd, CL_TRUE, 0, size_C, C, 0, NULL, NULL);
     checkError(err);
 }

@@ -11,6 +11,17 @@
 #include <string>
 #include <map>
 
+void checkSolution(float *f, int size)
+{
+    float sum = 0;
+    for (int i = 0; i < size; i++)
+    {
+        sum += f[i];
+    }
+
+    std::cout << "CheckSum: " << sum << std::endl;
+}
+
 std::map<std::string, std::string> parseArgs(int argc, char **argv)
 {
     std::map<std::string, std::string> args;

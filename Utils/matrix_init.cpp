@@ -9,16 +9,6 @@
 #include <iostream>
 #include "../Utils/matrix_init.h"
 
-void checkSolution(float *f, int size)
-{
-    float sum = 0;
-    for (int i = 0; i < size; i++)
-    {
-        sum += f[i];
-    }
-
-    std::cout << "CheckSum: " << sum << std::endl;
-}
 
 void fill(float *f, int size, int seed)
 {

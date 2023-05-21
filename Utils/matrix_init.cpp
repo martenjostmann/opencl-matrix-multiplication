@@ -17,7 +17,7 @@ void checkSolution(float *f, int size)
         sum += f[i];
     }
 
-    std::cout << sum << std::endl;
+    std::cout << "CheckSum: " << sum << std::endl;
 }
 
 void fill(float *f, int size, int seed)

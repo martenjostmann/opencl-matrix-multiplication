@@ -30,7 +30,10 @@ char *readKernel(const char *filename, long *size)
     rewind(fp);
 
     source_str = (char *)malloc(program_size + 1);
-    source_str[program_size] = '\0';
+    for (int i = 0; i < program_size + 1; i++)
+    {
+        source_str[i] = '\0';
+    }
 
     fread(source_str, sizeof(char), program_size, fp);
     fclose(fp);

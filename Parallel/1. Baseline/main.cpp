@@ -12,6 +12,7 @@
 #include "../../Utils/matrix_init.h"
 #include "../../Utils/general.h"
 #include "../Utils/opencl_general.h"
+#include "../Utils/opencl_params.h"
 #include <CL/cl.h>
 
 int main(int argc, char **argv)

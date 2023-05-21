@@ -4,6 +4,7 @@
 #include <CL/cl.h>
 
 void checkError(cl_int);
+char *readKernel(const char *, long *);
 void printBuildLog(cl_program, cl_device_id);
 void initOpenCL(int, cl_device_type);
 void createKernel(const char *, const char *);

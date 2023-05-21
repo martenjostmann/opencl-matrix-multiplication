@@ -1,11 +1,16 @@
 CC=g++
-INCLUDE_PATH="C:\Users\marte\vcpkg\packages\opencl_x64-windows\include"
-LIBRARY_PATH="C:\Users\marte\vcpkg\packages\opencl_x64-windows\lib"
-CFLAGS= -std=c++14 -Wall -lboost_system -I$(INCLUDE_PATH)
+CFLAGS= -std=c++14 -Wall -lboost_system
 LDFLAGS= -L$(LIBRARY_PATH) -lOpenCL
-
-SRCS=main.cpp ../../Utils/matrix_init.cpp ../../Utils/general.cpp ../Utils/opencl_general.cpp
+SRCS=main.cpp ../../Utils/matrix_init.cpp ../../Utils/general.cpp ../Utils/opencl_general.cpp ../Utils/opencl_params.cpp
 OBJS = $(subst .cpp,.o,$(SRCS))
+
+ifdef INCLUDE_PATH
+CFLAGS += -I$(INCLUDE_PATH)
+endif
+
+ifdef LIBRARY_PATH
+LDFLAGS= -L$(LIBRARY_PATH) -lOpenCL
+endif
 
 all: main
 

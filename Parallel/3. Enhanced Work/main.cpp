@@ -13,6 +13,7 @@
 #include "../../Utils/matrix_init.h"
 #include "../../Utils/general.h"
 #include "../Utils/opencl_general.h"
+#include "../Utils/opencl_params.h"
 #include <CL/cl.h>
 #include "properties.h"
 

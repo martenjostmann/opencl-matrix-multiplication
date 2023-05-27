@@ -11,6 +11,12 @@
 #include <string>
 #include <map>
 
+/**
+ * Check the solution by computing a checksum. It will print the result to the console.
+ *
+ * @param *f pointer to the array to be checked
+ * @param size size of the array
+ */
 void checkSolution(float *f, int size)
 {
     float sum = 0;
@@ -22,6 +28,13 @@ void checkSolution(float *f, int size)
     std::cout << "CheckSum: " << sum << std::endl;
 }
 
+/**
+ * Pase command line arguments and return a map with the parameters.
+ *
+ * @param argc number of arguments
+ * @param **argv pointer to the arguments
+ * @return map with the parameters
+ */
 std::map<std::string, std::string> parseArgs(int argc, char **argv)
 {
     std::map<std::string, std::string> args;
@@ -44,6 +57,12 @@ std::map<std::string, std::string> parseArgs(int argc, char **argv)
     return args;
 }
 
+/**
+ * Get the size of the array from the command line arguments.
+ *
+ * @param params map with the parameters
+ * @return tuple with array sizes (x, y, z)
+ */
 std::tuple<int, int, int> getXYZ(std::map<std::string, std::string> params)
 {
 

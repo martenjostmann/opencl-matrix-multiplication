@@ -9,7 +9,13 @@
 #include <iostream>
 #include "../Utils/matrix_init.h"
 
-
+/**
+ * Fill the matrix with random float values.
+ *
+ * @param *f pointer to the matrix to be filled
+ * @param size size of the matrix
+ * @param seed seed for the random number generator
+ */
 void fill(float *f, int size, int seed)
 {
     srand(seed);
@@ -20,6 +26,15 @@ void fill(float *f, int size, int seed)
     }
 }
 
+/**
+ * Initialize a matrix
+ *
+ * @param *f pointer to the matrix to be initialized
+ * @param size size of the matrix
+ * @param fill_matrix if true, the matrix will be filled with random values
+ * @param seed seed for the random number generator
+ * @return pointer to the initialized matrix
+ */
 float *matrixInit(float *matrix, int size, bool fill_matrix, int seed)
 {
     matrix = new float[size];

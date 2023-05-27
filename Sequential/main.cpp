@@ -13,7 +13,17 @@
 
 #define WIDTH 1024
 
-void matrixMultiplication(float *M, float *N, float *P, int X, int Y, int Z)
+/**
+ * Sequential matrix multiplication.
+ *
+ * @param *A pointer to the first matrix
+ * @param *B pointer to the second matrix
+ * @param *C pointer to the resulting matrix
+ * @param X number of rows of the first matrix
+ * @param Y number of columns of the first matrix and rows of the second matrix
+ * @param Z number of columns of the second matrix
+ */
+void matrixMultiplication(float *A, float *B, float *C, int X, int Y, int Z)
 {
 
     for (int i = 0; i < X; i++)
@@ -23,9 +33,9 @@ void matrixMultiplication(float *M, float *N, float *P, int X, int Y, int Z)
             float sum = 0;
             for (int k = 0; k < Y; k++)
             {
-                sum += M[i * Y + k] * N[k * Z + j];
+                sum += A[i * Y + k] * B[k * Z + j];
             }
-            P[i * Z + j] = sum;
+            C[i * Z + j] = sum;
         }
     }
 }
@@ -44,9 +54,9 @@ void printMatrix(float *M, int X, int Y)
 
 int main(int argc, char **argv)
 {
-    float *M;
-    float *N;
-    float *P;
+    float *A;
+    float *B;
+    float *C;
     std::tuple<int, int, int> XYZ;
 
     // Parse arguments
@@ -57,24 +67,24 @@ int main(int argc, char **argv)
 
     int X = std::get<0>(XYZ), Y = std::get<1>(XYZ), Z = std::get<2>(XYZ);
 
-    M = matrixInit(M, X * Y, true, 2);
-    N = matrixInit(N, Y * Z, true, 3);
-    P = matrixInit(P, X * Z, false);
+    A = matrixInit(A, X * Y, true, 2);
+    B = matrixInit(B, Y * Z, true, 3);
+    C = matrixInit(C, X * Z, false);
 
     // Start time
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-    matrixMultiplication(M, N, P, X, Y, Z);
+    matrixMultiplication(A, B, C, X, Y, Z);
 
     // End time
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
-    checkSolution(P, X * Z);
+    checkSolution(C, X * Z);
 
     // Free resources
-    delete[] M;
-    delete[] N;
-    delete[] P;
+    delete[] A;
+    delete[] B;
+    delete[] C;
 
     std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
 }

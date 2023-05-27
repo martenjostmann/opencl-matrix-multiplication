@@ -2,7 +2,7 @@
 
 ## Execution instruction
 
-Every optimization resides in a separate folder. In each folder there is Makefile that can be used to compile the specific optimization. When the the library and include path cannot be found on the PATH the location can be specified with `INCLUDE_PATH` and `LIBRARY_PATH` as arguments in the Makefile:
+Every optimization resides in a separate folder. In each folder there is Makefile that can be used to compile the specific optimization. If the library and include path cannot be found on the PATH the location can be specified with `INCLUDE_PATH` and `LIBRARY_PATH` as arguments in the Makefile:
 
 ```
 make INCLUDE_PATH=<path/to/include> LIBRARY_PATH=<path/to/lib>

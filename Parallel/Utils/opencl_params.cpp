@@ -4,6 +4,12 @@
 #include <map>
 #include <CL/cl.h>
 
+/**
+ * Get the id of the OpenCL platform from the command line arguments.
+ *
+ * @param params map with the parameters
+ * @return id of the OpenCL platform
+ */
 int getPlatformId(std::map<std::string, std::string> params)
 {
     if (params.find("p") == params.end())
@@ -17,6 +23,12 @@ int getPlatformId(std::map<std::string, std::string> params)
     }
 }
 
+/**
+ * Get the type of the OpenCL device from the command line arguments.
+ *
+ * @param params map with the parameters
+ * @return type of the OpenCL device (CL_DEVICE_TYPE_GPU or CL_DEVICE_TYPE_CPU)
+ */
 cl_device_type getDeviceType(std::map<std::string, std::string> params)
 {
     if (params.find("d") == params.end())
@@ -44,6 +56,12 @@ cl_device_type getDeviceType(std::map<std::string, std::string> params)
     }
 }
 
+/**
+ * Get the path to the OpenCL kernel file from the command line arguments.
+ *
+ * @param params map with the parameters
+ * @return path to the OpenCL kernel file
+ */
 const char *getKernelPath(std::map<std::string, std::string> params)
 {
     if (params.find("k") == params.end())
@@ -57,6 +75,12 @@ const char *getKernelPath(std::map<std::string, std::string> params)
     }
 }
 
+/**
+ * get the path to the OpenCL header file from the command line arguments.
+ *
+ * @param params map with the parameters
+ * @return path to the OpenCL header file
+ */
 const char *getHeaderPath(std::map<std::string, std::string> params)
 {
     if (params.find("h") == params.end())

@@ -25,6 +25,13 @@ void checkError(cl_int err)
         printf("Error with errorcode: %d\n", err);
 }
 
+/**
+ * Read the kernel from the file and return it as a string.
+ *
+ * @param *filename name of the file to be read
+ * @param *size pointer to the size of the kernel file
+ * @return pointer to the kernel string
+ */
 char *readKernel(const char *filename, long *size)
 {
     FILE *fp;
@@ -64,6 +71,12 @@ char *readKernel(const char *filename, long *size)
     return source_str;
 }
 
+/**
+ * Init the OpenCL environment including the platform, device, context and command queue.
+ *
+ * @param platform_id id of the platform to be used
+ * @param device_type type of the device to be used (CL_DEVICE_TYPE_CPU or CL_DEVICE_TYPE_GPU)
+ */
 void initOpenCL(int platform_id, cl_device_type device_type)
 {
     cl_int err;
@@ -97,6 +110,12 @@ void initOpenCL(int platform_id, cl_device_type device_type)
     checkError(err);
 }
 
+/**
+ * Print the build log in case of an error
+ *
+ * @param program the built program were error will be printed from
+ * @param device the device used for the program
+ */
 void printBuildLog(cl_program program, cl_device_id device)
 {
     cl_int err;
@@ -119,6 +138,12 @@ void printBuildLog(cl_program program, cl_device_id device)
     free(build_log);
 }
 
+/**
+ * Create and compile kernel code
+ *
+ * @param *kernel_path path to the kernel code
+ * @param *header_path path to the header file
+ */
 void createKernel(const char *kernel_path, const char *header_path)
 {
     cl_int err;
@@ -177,6 +202,18 @@ void createKernel(const char *kernel_path, const char *header_path)
     checkError(err);
 }
 
+/**
+ * Start matrix multiplication kernel
+ *
+ * @param *A pointer to the first matrix
+ * @param *B pointer to the second matrix
+ * @param *C pointer to the resulting matrix
+ * @param X number of rows of the first matrix
+ * @param Y number of columns of the first matrix and rows of the second matrix
+ * @param Z number of columns of the second matrix
+ * @param globalSize global size of the kernel
+ * @param localSize local size of the kernel (number of work items per work group)
+ */
 void matrixMultiplication(float *A, float *B, float *C, int X, int Y, int Z, size_t globalSize[], size_t localSize[])
 {
     cl_int err;
@@ -184,19 +221,23 @@ void matrixMultiplication(float *A, float *B, float *C, int X, int Y, int Z, siz
     int size_B = Y * Z * sizeof(float);
     int size_C = X * Z * sizeof(float);
 
+    // Create buffers for matrices
     cl_mem Ad = clCreateBuffer(context, CL_MEM_READ_ONLY, size_A, NULL, &err);
     checkError(err);
     cl_mem Bd = clCreateBuffer(context, CL_MEM_READ_ONLY, size_B, NULL, &err);
     checkError(err);
 
+    // Write matrices to buffers
     err = clEnqueueWriteBuffer(commandQueue, Ad, CL_FALSE, 0, size_A, A, 0, NULL, NULL);
     checkError(err);
     err = clEnqueueWriteBuffer(commandQueue, Bd, CL_FALSE, 0, size_B, B, 0, NULL, NULL);
     checkError(err);
 
+    // Create buffer for the result
     cl_mem Cd = clCreateBuffer(context, CL_MEM_READ_WRITE, size_C, NULL, &err);
     checkError(err);
 
+    // Set kernel arguments
     err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &Ad);
     err |= clSetKernelArg(kernel, 1, sizeof(cl_mem), &Bd);
     err |= clSetKernelArg(kernel, 2, sizeof(cl_mem), &Cd);
@@ -205,9 +246,11 @@ void matrixMultiplication(float *A, float *B, float *C, int X, int Y, int Z, siz
     err |= clSetKernelArg(kernel, 5, sizeof(int), &Z);
     checkError(err);
 
+    // Start kernel
     err = clEnqueueNDRangeKernel(commandQueue, kernel, 2, NULL, globalSize, localSize, 0, NULL, NULL);
     checkError(err);
 
+    // Read result from buffer
     err = clEnqueueReadBuffer(commandQueue, Cd, CL_TRUE, 0, size_C, C, 0, NULL, NULL);
     checkError(err);
 }

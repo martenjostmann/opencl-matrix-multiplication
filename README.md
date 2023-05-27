@@ -1,4 +1,4 @@
-# Matrix Multiplication with OpenCL
+# Matrix Multiplication using OpenCL
 
 ## Execution instruction
 
@@ -61,6 +61,10 @@ In some optimization folders a `properties.h` file is available to control speci
 |   |   |   Makefile
 |   |   |   properties.h
 |
+|
+└───Results
+|   |   analysis.ipynb      -> Generation of graphics
+|   |   output_pdf          -> graphics
 |
 └───Sequential              -> Code for sequential matrix multiplication
 │   │   main.cpp            -> General functions

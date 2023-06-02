@@ -28,6 +28,12 @@ For the matrix multiplication with the OpenCL interface additional argument can 
 
 In some optimization folders a `properties.h` file is available to control specific parameters beyond the command line arguments
 
+## Results
+
+![](Results/seq_baseline.png)
+
+![](Results/all_gpu.png)
+
 ## Project Structure
 
 ```
